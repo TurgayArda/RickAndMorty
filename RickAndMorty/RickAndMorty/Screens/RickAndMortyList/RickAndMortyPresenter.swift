@@ -8,6 +8,7 @@
 import Foundation
 
 class RickAndMortyPresenter: RickAndMortyPresenterProtocol {
+    
     var view: RickAndMortyViewDelegate?
     var interactor: RickAndMortyInteractorProtocol?
     init(interactor: RickAndMortyInteractorProtocol, view: RickAndMortyViewDelegate) {
@@ -29,8 +30,6 @@ extension RickAndMortyPresenter: RickAndMortyInteractorDelegate {
     func handleOutPut(_ output: RickAndMortyInteractorOutPut) {
         switch output {
         case .rickAndMortyList(let array):
-//            let data = array.map(RickAndMortyPresentations.init)
-            //self.value = data
             view?.handleOutPut(.rickAndMortyList(array))
         case .RickAndMortyError(let string):
             view?.handleOutPut(.rickAndMortyError(string))

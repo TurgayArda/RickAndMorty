@@ -9,8 +9,10 @@ import Foundation
 import UIKit
 
 class RickAndMortyDetailPresenter: RickAndMortyDetailPresenterProtocol {
+    
     var data: RickResult?
     var view: RickAndMortyDetailViewProtocol?
+    
     init(data: RickResult, view: RickAndMortyDetailViewProtocol) {
         self.data = data
         self.view = view

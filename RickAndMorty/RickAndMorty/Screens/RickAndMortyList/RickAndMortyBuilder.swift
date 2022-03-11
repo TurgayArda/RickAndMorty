@@ -13,8 +13,6 @@ final class RickAndMortyBuilder {
         let router = RickAndMortyRouter(view: view)
         let interactor = RickAndMortyInteractor(service: RickAndMortyService())
         let presenter = RickAndMortyPresenter(interactor: interactor, view: view)
-        let cell = RickCollectionViewCell()
-        view.cell = cell
         view.presenter = presenter
         view.router = router
         return view

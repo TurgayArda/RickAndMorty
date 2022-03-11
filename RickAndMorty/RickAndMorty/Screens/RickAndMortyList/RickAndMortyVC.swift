@@ -12,10 +12,14 @@ class RickAndMortyVC: UIViewController, RickAndMortyProviderDelegate {
     
     let context = appDelegate.persistentContainer.viewContext
     
-    private lazy var searchBar = UISearchController()
+    private lazy var searchBar: UISearchController = {
+       let search = UISearchController()
+       
+        return search
+    }()
     private lazy var segmentControl: UISegmentedControl = {
        var segment = UISegmentedControl()
-        let items = ["Grid", "List"]
+        let items = [ListContants.SegmentItems.grid.rawValue, ListContants.SegmentItems.list.rawValue]
         segment = UISegmentedControl(items: items)
         segment.backgroundColor = .purple
         return segment
@@ -40,71 +44,63 @@ class RickAndMortyVC: UIViewController, RickAndMortyProviderDelegate {
     var router: RickAndMortyRouterProtocol?
     var favoriteList = [Favorite]()
     var list = [String]()
-    var del: Int!
-    var cell: RickCollectionViewCell?
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        configure()
-        searchBar.searchBar.scopeButtonTitles = ["Name","Alive","Dead","unknown"]
-        searchBar.searchResultsUpdater = self
-        searchBar.obscuresBackgroundDuringPresentation = false
-        searchBar.searchBar.enablesReturnKeyAutomatically = false
-        searchBar.searchBar.returnKeyType = UIReturnKeyType.done
-        definesPresentationContext = true
-        searchBar.searchBar.placeholder = "ARA"
-        provider.delegate = self
-        collection.dataSource = provider
-        collection.delegate = provider
-        createSegmentConntrol()
-        collection.register(
-        RickCollectionViewCell.self,
-        forCellWithReuseIdentifier: RickCollectionViewCell.Identifier.path.rawValue
-    )
+        initDelegeta()
         presenter?.load()
-        //getData()
-        //deleteData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         getData()
     }
     
+    func initDelegeta() {
+        collection.register(
+        RickCollectionViewCell.self,
+        forCellWithReuseIdentifier: RickCollectionViewCell.Identifier.path.rawValue
+                            )
+        searchBar.searchResultsUpdater = self
+        provider.delegate = self
+        collection.dataSource = provider
+        collection.delegate = provider
+        searchBar.searchBar.placeholder = ListContants.SearchBar.placeHolder.rawValue
+        searchBar.searchBar.scopeButtonTitles = [ListContants.SearchBar.scopeTitleAll.rawValue,
+                                                 ListContants.SearchBar.scopeTitleAlive.rawValue,
+                                                 ListContants.SearchBar.scopeTitleDead.rawValue,
+                                                 ListContants.SearchBar.scopeTitleunknown.rawValue
+                                                 ]
+        configure()
+        favoriBarButton()
+        createSegmentConntrol()
+    }
     
     func getData() {
+        list.removeAll()
     do {
         favoriteList = try context.fetch(Favorite.fetchRequest())
     }catch{
         print("error")
     }
-
     for k in favoriteList {
         guard let temp = k.name else { return }
-        //list.append(k.name ?? "")
         list.append(temp)
-        //list.append(k.name ?? "")
     }
-        print("fav listesi: \(list)")
-        del = list.count
-        //provider.isFavorite(name: list)
-       //if list.contains()
-        //cell?.isFavorite(bool: true, name: <#T##[String]#>)
-
+        provider.isFavorite(name: list)
         DispatchQueue.main.async {
             self.collection.reloadData()
         }
 }
     
-    func deleteData() {
-        for i in 0...1 {
-            let fav = favoriteList[i]
-            context.delete(fav)
-            appDelegate.saveContext()
-        }
-//        let kis = favoriteList[0]
-//        context.delete(kis)
-//        appDelegate.saveContext()
+    func favoriBarButton() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Favorites", style: .plain, target: self, action: #selector(goToFavorites(_:)))
+    }
+    
+    @objc func goToFavorites(_ navigationItem: UIBarButtonItem) {
+        let view = FavoriteVC()
+        self.show(view, sender: nil)
     }
     
     func createSegmentConntrol() {
@@ -148,17 +144,16 @@ extension RickAndMortyVC: RickAndMortyViewDelegate {
         case .rickAndMortyList(let array):
             self.data = array
             provider.load(value: array)
-            provider.isFavorite(name: list)
             DispatchQueue.main.async {
                 self.collection.reloadData()
             }
             
         case .rickAndMortyError(let error):
-            let errorAlert = UIAlertController(title: "hata",
+            let errorAlert = UIAlertController(title: ListContants.Alert.alertTitle.rawValue,
                                                message: error ,
                                                preferredStyle: .alert
                                                 )
-            let errorAction = UIAlertAction(title: "hata",
+            let errorAction = UIAlertAction(title: ListContants.Alert.actionTitle.rawValue,
                                             style: .cancel
                                             )
             errorAlert.addAction(errorAction)
@@ -166,7 +161,6 @@ extension RickAndMortyVC: RickAndMortyViewDelegate {
         case .title(let title):
             self.title = title
         }
-        //cell?.isFavorite(name: list)
     }
 }
 

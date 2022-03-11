@@ -11,8 +11,6 @@ import AlamofireImage
 import CoreData
 
 class RickCollectionViewCell: UICollectionViewCell {
-        
-    let context = appDelegate.persistentContainer.viewContext
     
     private lazy var rickName: UILabel = {
         let label = UILabel()
@@ -21,45 +19,44 @@ class RickCollectionViewCell: UICollectionViewCell {
         label.font = .boldSystemFont(ofSize: 15)
         label.textColor = .black
         label.numberOfLines = 0
+        addSubview(label)
         return label
     }()
     
-    private let favoriteButton: UIButton = {
+    private lazy var favoriteButton: UIButton = {
         let playButton  = UIButton(type: .system)
         let paperPlane = UIImage(systemName: "star.fill")
-//        let arda  = UIButton(type: .system)
-//        let ardapaper = UIImage(systemName: "heart.fill")
-        playButton.alpha = 1
+        playButton.alpha = 0
         playButton.setImage(paperPlane, for: .normal)
-//        arda.setImage(ardapaper, for: .normal)
+        addSubview(playButton)
         return playButton
     }()
     
-    private let status: UILabel = {
+    private lazy var status: UILabel = {
        let label = UILabel()
         label.font = .boldSystemFont(ofSize: 15)
         label.textAlignment = .center
-        label.textColor = .white
+        label.textColor = .black
+        addSubview(label)
         return label
     }()
     
-    private let species: UILabel = {
+    private lazy var species: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 15)
         label.textAlignment = .center
-        label.textColor = .white
+        label.textColor = .black
+        addSubview(label)
         return label
     }()
     
-    private let image = UIImageView()
-    
-    var isListFlowLayout: Bool = false
-    var favName = [String]()
-    var comName = String()
-    var dizi = [String]()
-    var favoriteList = [Favorite]()
-    var list = [String]()
-    var bo = Bool()
+    private lazy var image: UIImageView = {
+       let image = UIImageView()
+        image.contentMode = .scaleAspectFill
+        image.clipsToBounds = true
+        contentView.addSubview(image)
+        return image
+    }()
     
     enum Identifier: String {
         case path = "Cell"
@@ -76,117 +73,41 @@ class RickCollectionViewCell: UICollectionViewCell {
     }
     
     private func configure() {
-       
-        addSubview(favoriteButton)
-        addSubview(image)
-        addSubview(rickName)
-        addSubview(status)
-        addSubview(species)
         makeImage()
         makeName()
         makeStatus()
         makeSpecies()
         makeFavorite()
-        
+    }
+    
+    override func prepareForReuse() {
+        isFavorite(isBool: false)
     }
 
-    func saveModel(value: RickResult, isBool: Bool, list: [String]) {
+    func saveModel(value: RickResult) {
         rickName.text = "Name: \(value.name)"
-        self.comName = value.name
-        dizi.append(comName)
        image.af.setImage(withURL: URL(string: value.image)!)
        status.text = "Status: \(value.status)"
         species.text = "Species: \(value.species)"
-        self.list = list
-        //self.bo = isBool
         
-//        if isBool {
-//            for i in list {
-//                if i == comName {
-//
-//                }
-//            }
-//        }
-//
-//        if isBool {
-//            for i in list {
-//                if dizi.contains(i) {
-//                    //favoriteButton.alpha = 1
-//                    print("sisli")
-//                    bo = true
-//                }
-//            }
-//        }
-//        else{
-//            for i in list {
-//                if dizi.contains(i) {
-//                    print("arda")
-//                }else{
-//                    //favoriteButton.alpha = 0
-//                    bo = false
-//                }
-//            }
-//       }
-       
+        switch value.status {
+        case .alive:
+            contentView.backgroundColor = .systemGreen
+        case .dead:
+            contentView.backgroundColor = .systemCyan
+        case .unknown:
+            contentView.backgroundColor = .systemPink
+        }
     }
     
-    func isFavorite(bool: Bool, name: [String]) {
-        if bool {
-            for i in name {
-                if dizi.contains(i) {
-                    favoriteButton.alpha = 1
-                }
-            }
-        }else{
+    func isFavorite(isBool: Bool) {
+        if isBool {
+            favoriteButton.alpha = 1
+        }
+        else{
             favoriteButton.alpha = 0
         }
     }
-
-//
-//    func vericek() {
-//        do {
-//            favoriteList = try context.fetch(Favorite.fetchRequest())
-//        }catch{
-//            print("error")
-//        }
-//
-//        for k in favoriteList {
-//            guard let temp = k.name else { return }
-//            if dizi.contains(temp) {
-//                print("yildiz bas")
-//            }else{
-//                //print("yildiz basma")
-//            }
-//            if k.name == comName {
-//                favoriteButton.alpha = 1
-//            }
-//            //print(k.name!)
-//        }
-//    }
-    
-//    func verisil() {
-//
-//    }
-
-    func flowLayot(value: Bool) {
-        self.isListFlowLayout = value
-        //hadi()
-    }
-    
-//        func getData() {
-//        do {
-//            favoriteList = try context.fetch(Favorite.fetchRequest())
-//        }catch{
-//            print("error")
-//        }
-//
-//        for k in favoriteList {
-//            if k.name == comName {
-//                favoriteButton.alpha = 1
-//            }
-//        }
-//            print("fav listesi: \(list)")
-//    }
 }
 
 extension RickCollectionViewCell {

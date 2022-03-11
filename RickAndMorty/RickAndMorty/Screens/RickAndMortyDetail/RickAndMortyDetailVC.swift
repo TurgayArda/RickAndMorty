@@ -15,65 +15,85 @@ let appDelegate = UIApplication.shared.delegate as! AppDelegate
 class RickAndMortyDetailVC: UIViewController {
 
     let context = appDelegate.persistentContainer.viewContext
-    var faoriList = [Favorite]()
     
-    private let rickImage = UIImageView()
-    private let rickName: UILabel = {
+    private lazy var rickImage: UIImageView = {
+        let image = UIImageView()
+        view.addSubview(image)
+        return image
+    }()
+    
+    private lazy var rickName: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 18)
+        view.addSubview(label)
         return label
     }()
     
-    private let rickStatus: UILabel = {
+    private lazy var rickStatus: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 18)
+        view.addSubview(label)
         return label
     }()
     
-    private let rickSpecies: UILabel = {
+    private lazy var rickSpecies: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 18)
+        view.addSubview(label)
         return label
     }()
     
-    private let rickGender: UILabel = {
+    private lazy var rickGender: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 18)
+        view.addSubview(label)
         return label
     }()
     
-    private let rickLocation: UILabel = {
+    private lazy var rickLocation: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 18)
+        view.addSubview(label)
         return label
     }()
     
-    private let rickEpisode: UILabel = {
+    private lazy var rickEpisode: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 18)
+        view.addSubview(label)
         return label
     }()
     
-    private let rickOrigin: UILabel = {
+    private lazy var rickOrigin: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 18)
+        view.addSubview(label)
         return label
     }()
     
-    private let favoriButton: UIButton = {
+    private lazy var favoriButton: UIButton = {
         var button = UIButton()
-        button.setTitle("Add to Favorite", for: .normal)
+        button.setTitle(DetailConstants.ButtonConstants.addButton.rawValue, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .white
         button.setTitleColor(UIColor.black, for: .normal)
+        view.addSubview(button)
+        return button
+    }()
+    
+    private lazy var deleteFavoriteButton: UIButton = {
+        let button = UIButton()
+        button.setTitle(DetailConstants.ButtonConstants.deleteButton.rawValue, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .white
+        button.setTitleColor(UIColor.black, for: .normal)
+        view.addSubview(button)
         return button
     }()
 
     var presenter: RickAndMortyDetailPresenter?
     var episode: [String] = []
     var sendName = String()
-    var cell: RickCollectionViewCell?
-    var a =  [String]()
     var favoriteList = [Favorite]()
     var list = [String]()
     
@@ -86,15 +106,6 @@ class RickAndMortyDetailVC: UIViewController {
     }
     
     func configure() {
-        view.addSubview(rickImage)
-        view.addSubview(rickName)
-        view.addSubview(rickStatus)
-        view.addSubview(rickSpecies)
-        view.addSubview(rickGender)
-        view.addSubview(rickLocation)
-        view.addSubview(rickEpisode)
-        view.addSubview(rickOrigin)
-        view.addSubview(favoriButton)
         makeImage()
         makeName()
         makeStatus()
@@ -104,8 +115,10 @@ class RickAndMortyDetailVC: UIViewController {
         makeEpisode()
         makeOrigin()
         makeButton()
+        makeDeleteButton()
         getData()
-        clickButton()
+        addClickButton()
+        addDeleteButton()
     }
     
     func getData() {
@@ -114,9 +127,7 @@ class RickAndMortyDetailVC: UIViewController {
     }catch{
         print("error")
     }
-
     for k in favoriteList {
-        //print( " asdasdasd: \(k.name ?? "")")
         if let temp = k.name {
             list.append(temp)
         }
@@ -124,22 +135,31 @@ class RickAndMortyDetailVC: UIViewController {
     }
 }
     
-    func clickButton() {
+    func addClickButton() {
         favoriButton.addTarget(self, action: #selector(addFavorite(_:)), for: .touchUpInside)
     }
     
     @objc func addFavorite(_ favoriButton: UIButton) {
         let favorite = Favorite(context: context)
         if list.contains(sendName) {
-            print("zaten var ")
         }else{
             favorite.name = sendName
             appDelegate.saveContext()
-            print("eklendi")
         }
-//        print("eklendi")
-//        favorite.name = sendName
-//        appDelegate.saveContext()
+    }
+    
+    func addDeleteButton() {
+        deleteFavoriteButton.addTarget(self, action: #selector(addDelete(_:)), for: .touchUpInside)
+    }
+    
+    @objc func addDelete(_ deleteFavoriteButton: UIButton) {
+        for (index, i) in list.enumerated() {
+            if i == sendName {
+                let favori = favoriteList[index]
+                context.delete(favori)
+                appDelegate.saveContext()
+            }
+        }
     }
 }
 
@@ -169,12 +189,10 @@ extension RickAndMortyDetailVC {
                 .offset(10)
             make
                 .height
-                .equalTo(rickImage.snp.width)
-                .multipliedBy(1/1.5)
-//            make
-//                .width
-//                .equalTo(view.snp.width)
-//                .multipliedBy(1/1.1)
+                .equalTo(view.frame.height/2.4)
+            make
+                .width
+                .equalTo(view.frame.width/1.4)
             make
                 .centerX
                 .equalTo(view.snp.centerX)
@@ -268,12 +286,28 @@ extension RickAndMortyDetailVC {
     private func makeButton() {
         favoriButton.snp.makeConstraints { make in
             make
-                .bottom
-                .equalTo(view.safeAreaLayoutGuide)
-                .offset(-210)
+                .top
+                .equalTo(rickOrigin.snp.bottom)
+                .offset(15)
+//            make
+//                .width
+//                .equalTo(view.frame.height/2.3)
             make
                 .centerX
-                .equalTo(view.snp.centerX)
+                .equalTo(view.frame.width/2.8)
+        }
+    }
+    
+    private func makeDeleteButton() {
+        deleteFavoriteButton.snp.makeConstraints { make in
+            make
+                .top
+                .equalTo(rickOrigin.snp.bottom)
+                .offset(15)
+            make
+                .left
+                .equalTo(favoriButton.snp.right)
+                .offset(20)
         }
     }
 }

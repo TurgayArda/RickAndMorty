@@ -17,10 +17,10 @@ protocol RickAndMortyServiceProtocol {
 
 class RickAndMortyService: RickAndMortyServiceProtocol {
     func fetchAllData(onSuccess: @escaping ([RickResult]) -> Void, onError: @escaping (String) -> Void) {
-        AF.request(Url.url.rawValue, method: .get).responseDecodable(of: RickAndMorty.self) {
+        AF.request(ServiceConstants.Url.url.rawValue, method: .get).responseDecodable(of: RickAndMorty.self) {
             model in
             guard let data = model.value else {
-                return onError("data not found")
+                return onError(ServiceConstants.Error.error.rawValue)
             }
             let value = data.results
             onSuccess(value)

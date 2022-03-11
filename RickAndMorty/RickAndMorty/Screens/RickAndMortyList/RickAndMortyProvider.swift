@@ -12,14 +12,11 @@ class RickAndMortyProvider: NSObject, RickAndMortyProviderProtocol {
     
     var delegate: RickAndMortyProviderDelegate?
     var data: [RickAndMortyPresentations] = []
-    var detailData: [RickResult] = []
     var isSearch = Bool()
-    //var filterData: [RickAndMortyPresentations] = []
     var filterData: [RickResult] = []
     var isLayout = Bool()
     var routerData: [RickResult] = []
     var favName = [String]()
-    var arda = [String]()
 }
 
 extension RickAndMortyProvider {
@@ -41,10 +38,10 @@ extension RickAndMortyProvider {
         self.favName = name
     }
     
-    func filterForSearchTextAndScopeButton(searchText: String, scopeButton : String = "Name") {
+    func filterForSearchTextAndScopeButton(searchText: String, scopeButton : String = "All") {
         filterData = routerData.filter() {
             shape in
-            let scopeMatch = (scopeButton == "Name" || shape.status.rawValue.lowercased().contains(scopeButton.lowercased()))
+            let scopeMatch = (scopeButton == "All" || shape.status.rawValue.lowercased().contains(scopeButton.lowercased()))
                     if(searchText != "")
                     {
                         let searchTextMatch = shape.name.lowercased().contains(searchText.lowercased())
@@ -72,35 +69,30 @@ extension RickAndMortyProvider: UICollectionViewDataSource, UICollectionViewDele
         }
             cell.layer.borderColor = UIColor.black.cgColor
             cell.layer.borderWidth = 0.9
+        
         if isSearch {
             
             let filterValue = filterData[indexPath.row].name
             if favName.isEmpty {
-                cell.saveModel(value: filterData[indexPath.row], isBool: false, list: favName)
+                cell.saveModel(value: filterData[indexPath.row])
             }else{
                 for i in favName {
                     if i == filterValue {
-                        cell.saveModel(value: filterData[indexPath.row], isBool: true, list: favName)
-                    }
-                        else{
-                    cell.saveModel(value: filterData[indexPath.row], isBool: false, list: favName)
-                    }
+                        cell.isFavorite(isBool: true)
                 }
+                    cell.saveModel(value: filterData[indexPath.row])
             }
-            
+        }
         }else{
-            
             let routerValue = routerData[indexPath.row].name
-            arda.append(routerValue)
             if favName.isEmpty {
-                cell.saveModel(value: routerData[indexPath.row], isBool: false, list: favName)
+                cell.saveModel(value: routerData[indexPath.row])
             }else{
                 for i in favName {
                     if i == routerValue {
-                        cell.saveModel(value: routerData[indexPath.row], isBool: true, list: favName)
-                    }else{
-                        cell.saveModel(value: routerData[indexPath.row], isBool: false, list: favName)
+                        cell.isFavorite(isBool:true)
                     }
+                    cell.saveModel(value: routerData[indexPath.row])
                 }
             }
         }
@@ -108,7 +100,6 @@ extension RickAndMortyProvider: UICollectionViewDataSource, UICollectionViewDele
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
         var width: CGFloat = 0
         var height: CGFloat = 0
         let colums: CGFloat = 2
@@ -130,16 +121,11 @@ extension RickAndMortyProvider: UICollectionViewDataSource, UICollectionViewDele
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-            
         if isSearch {
-            print("secilen \(filterData[indexPath.row].name)")
            let filterDataTwo = filterData[indexPath.row]
-           //let filterRouter = RickAndMortyDetailPresentations(data: filterDataTwo)
             delegate?.selected(at: filterDataTwo)
         }else{
-            print("secilen \(data[indexPath.row].name)")
             let routerDataTwo = routerData[indexPath.row]
-            //let routerValue = RickAndMortyDetailPresentations(data: routerDataTwo)
             delegate?.selected(at: routerDataTwo)
         }
     }
