@@ -52,8 +52,8 @@ class RickCollectionViewCell: UICollectionViewCell {
     
     private lazy var image: UIImageView = {
        let image = UIImageView()
-        image.contentMode = .scaleAspectFill
         image.clipsToBounds = true
+        image.backgroundColor = .white
         contentView.addSubview(image)
         return image
     }()
@@ -131,12 +131,13 @@ extension RickCollectionViewCell {
                 .offset(5)
 //            make
 //                .height
-//                .equalTo(image.snp.width)
-//                .multipliedBy(1/1)
+//                .equalTo(contentView.snp.width)
+//                .multipliedBy(1/2)
             make
                 .width
+                //.equalTo(contentView.frame.width/1)
                 .equalTo(contentView.snp.width)
-                .multipliedBy(1/1.1)
+                .multipliedBy(1/1.2)
             make
                 .centerX
                 .equalTo(contentView.snp.centerX)

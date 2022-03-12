@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AlamofireImage
 
 class FavoriteViewCell: UITableViewCell {
 
@@ -15,6 +16,8 @@ class FavoriteViewCell: UITableViewCell {
         label.font = .boldSystemFont(ofSize: 18)
         return label
     }()
+    
+    private var favoriteImage =  UIImageView()
     
     enum Identifier: String {
         case path = "Cell"
@@ -31,26 +34,43 @@ class FavoriteViewCell: UITableViewCell {
     }
     
     private func configure() {
+        addSubview(favoriteImage)
         addSubview(favoriteName)
+        makeImage()
         makeName()
     }
     
-    func saveModel(value: String) {
+    func saveModel(value: String, image: String) {
         favoriteName.text = "Favori name: \(value)"
+        favoriteImage.af.setImage(withURL: URL(string: image)!)
+        
+        
     }
 }
 
 extension FavoriteViewCell {
+    private func  makeImage() {
+        favoriteImage.snp.makeConstraints { make in
+            make
+                .top
+                .equalTo(contentView.safeAreaLayoutGuide)
+                .offset(20)
+            make
+                .centerX
+                .equalTo(contentView.snp.centerX)
+        }
+    }
+    
     private func makeName() {
         favoriteName.snp.makeConstraints { make in
             make
                 .top
-                .equalTo(contentView)
+                .equalTo(favoriteImage.snp.bottom)
                 .offset(10)
             make
-                .left
-                .equalTo(contentView)
-                .offset(20)
+                .centerX
+                .equalTo(contentView.snp.centerX)
+                //.offset(20)
 //            make
 //                .centerX
 //                .equalTo(contentView.snp.centerX)

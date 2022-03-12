@@ -94,6 +94,7 @@ class RickAndMortyDetailVC: UIViewController {
     var presenter: RickAndMortyDetailPresenter?
     var episode: [String] = []
     var sendName = String()
+    var imageName = String()
     var favoriteList = [Favorite]()
     var list = [String]()
     
@@ -144,6 +145,7 @@ class RickAndMortyDetailVC: UIViewController {
         if list.contains(sendName) {
         }else{
             favorite.name = sendName
+            favorite.imageName = imageName
             appDelegate.saveContext()
         }
     }
@@ -167,6 +169,7 @@ extension RickAndMortyDetailVC: RickAndMortyDetailViewProtocol {
     func update(_ presentation: RickAndMortyDetailPresentations) {
         self.title = presentation.name
         rickImage.af.setImage(withURL: URL(string: presentation.image)!)
+        self.imageName = presentation.image
         rickName.text = "Name: \(presentation.name)"
         self.sendName = presentation.name
         rickStatus.text = "Status: \(presentation.status)"
