@@ -10,9 +10,7 @@ import UIKit
 class FavoriteVC: UIViewController {
     
     private lazy var context = appDelegate.persistentContainer.viewContext
-    
     private var favoriteTable = UITableView()
-    
     private lazy var favoriteList = [Favorite]()
     private lazy var list = [String]()
     private lazy var imageList = [String]()
@@ -20,18 +18,25 @@ class FavoriteVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        favoriteTable.register(FavoriteViewCell.self, forCellReuseIdentifier: FavoriteViewCell.Identifier.path.rawValue)
-       
-        view.addSubview(favoriteTable)
-        view.backgroundColor = .white
-        makeTable()
-        favoriteTable.delegate = self
-        favoriteTable.dataSource = self
-        favoriteTable.rowHeight = 210
+       initDelegate()
+        configure()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         getData()
+    }
+    
+    func initDelegate() {
+        favoriteTable.register(FavoriteViewCell.self, forCellReuseIdentifier: FavoriteViewCell.Identifier.path.rawValue)
+        favoriteTable.delegate = self
+        favoriteTable.dataSource = self
+    }
+    
+    func configure() {
+        view.addSubview(favoriteTable)
+        view.backgroundColor = .white
+        makeTable()
+        favoriteTable.rowHeight = 210
     }
     
     func getData() {

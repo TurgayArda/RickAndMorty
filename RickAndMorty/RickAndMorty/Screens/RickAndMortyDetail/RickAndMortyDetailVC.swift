@@ -180,8 +180,9 @@ extension RickAndMortyDetailVC: RickAndMortyDetailViewProtocol {
         let episodeCount = episode.count
         rickEpisode.text = "Episode Count: \(episodeCount)"
         rickOrigin.text = "Origin: \(presentation.origin)"
+            
+        }
     }
-}
 
 extension RickAndMortyDetailVC {
     private func makeImage() {

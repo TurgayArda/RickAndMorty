@@ -43,8 +43,6 @@ class FavoriteViewCell: UITableViewCell {
     func saveModel(value: String, image: String) {
         favoriteName.text = "Favori name: \(value)"
         favoriteImage.af.setImage(withURL: URL(string: image)!)
-        
-        
     }
 }
 
@@ -70,10 +68,6 @@ extension FavoriteViewCell {
             make
                 .centerX
                 .equalTo(contentView.snp.centerX)
-                //.offset(20)
-//            make
-//                .centerX
-//                .equalTo(contentView.snp.centerX)
         }
     }
 }

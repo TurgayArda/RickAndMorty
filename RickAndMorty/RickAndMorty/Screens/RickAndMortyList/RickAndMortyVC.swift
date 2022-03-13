@@ -51,6 +51,7 @@ class RickAndMortyVC: UIViewController, RickAndMortyProviderDelegate {
         
         initDelegeta()
         presenter?.load()
+       
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -76,6 +77,7 @@ class RickAndMortyVC: UIViewController, RickAndMortyProviderDelegate {
         favoriBarButton()
         createSegmentConntrol()
     }
+    
     
     func getData() {
         list.removeAll()
@@ -130,6 +132,7 @@ class RickAndMortyVC: UIViewController, RickAndMortyProviderDelegate {
         view.backgroundColor = .white
         makeSegment()
         makeCollection()
+        self.collection.keyboardDismissMode = .onDrag
     }
     
     func selected(at select: RickResult) {
@@ -171,7 +174,7 @@ extension RickAndMortyVC: UISearchResultsUpdating {
            let searchBar = searchController.searchBar
            let selectedScope = searchBar.scopeButtonTitles![searchBar.selectedScopeButtonIndex]
            let searchText = searchBar.text!
-        provider.filterForSearchTextAndScopeButton(searchText: searchText, scopeButton: selectedScope)
+            provider.filterForSearchTextAndScopeButton(searchText: searchText, scopeButton: selectedScope)
         DispatchQueue.main.async {
             self.collection.reloadData()
             
